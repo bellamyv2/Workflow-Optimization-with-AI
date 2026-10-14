@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Pricing card</title>
+  <style>
+    :root {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #172033;
+      background: #f4f7fb;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .pricing {
+      width: min(100%, 360px);
+      padding: 28px;
+      background: #fff;
+      border: 1px solid #e4eaf2;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgb(28 43 68 / 10%);
+    }
+
+    .title {
+      margin: 0 0 12px;
+      font-size: 1.375rem;
+      line-height: 1.3;
+    }
+
+    .price {
+      margin: 0 0 20px;
+      color: #087443;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+
+    .features {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .features li {
+      padding: 12px 0;
+      border-bottom: 1px solid #edf0f5;
+      color: #46536a;
+    }
+
+    .features li::before {
+      content: "✓";
+      margin-right: 10px;
+      color: #087443;
+      font-weight: 700;
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 48px;
+      margin-top: 22px;
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 8px;
+      background: #2457d6;
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 150ms ease, transform 150ms ease;
+    }
+
+    .btn:hover {
+      background: #1945b3;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid #9bb7ff;
+      outline-offset: 3px;
+    }
+
+    .status {
+      min-height: 1.5em;
+      margin: 16px 0 0;
+      color: #087443;
+      text-align: center;
+    }
+
+    @media (max-width: 400px) {
+      body {
+        padding: 16px;
+      }
+
+      .pricing {
+        padding: 22px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="pricing-cards"></div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <script>
+    function Card(title, price, features) {
+      const card = document.createElement("article");
+      card.className = "pricing";
+
+      const heading = document.createElement("h2");
+      heading.className = "title";
+      heading.textContent = title;
+      card.append(heading);
+
+      const priceText = document.createElement("p");
+      priceText.className = "price";
+      priceText.textContent = price;
+      card.append(priceText);
+
+      const featureList = document.createElement("ul");
+      featureList.className = "features";
+      for (const feature of features) {
+        const item = document.createElement("li");
+        item.textContent = feature;
+        featureList.append(item);
+      }
+      card.append(featureList);
+
+      const button = document.createElement("button");
+      button.className = "btn";
+      button.type = "button";
+      button.textContent = "Start Trial";
+      button.addEventListener("click", () => {
+        card.dispatchEvent(new CustomEvent("trial-start", {
+          bubbles: true,
+          detail: { title }
+        }));
+      });
+      card.append(button);
+
+      return card;
+    }
+
+    const cards = document.querySelector("#pricing-cards");
+    const status = document.querySelector("#status");
+
+    cards.append(Card("Basic Plan", "$9.99 / month", [
+      "1 GB Storage",
+      "Basic Support",
+      "All Core Features"
+    ]));
+
+    cards.addEventListener("trial-start", (event) => {
+      status.textContent = `Your ${event.detail.title} trial is ready to start.`;
+    });
+  </script>
+</body>
+</html>
